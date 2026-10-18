@@ -1,0 +1,37 @@
+{
+  "name": "smart-study-planner",
+  "version": "2.0.0",
+  "description": "Smart Study Planner - Full-stack academic productivity platform migrated for Vercel serverless deployment with PostgreSQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node -e \"console.log('Smart Study Planner production build ready.')\"",
+    "test": "node --test tests/*.test.js",
+    "db:init": "node scripts/init-db.js",
+    "db:migrate-sqlite": "node scripts/migrate-sqlite-to-postgres.js"
+  },
+  "keywords": [
+    "study-planner",
+    "vercel",
+    "serverless",
+    "postgresql",
+    "neon",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "pg-mem": "^3.0.14",
+    "supertest": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -9,10 +9,24 @@
 // --- Global Configuration & State ---
 const CONFIG = {
   get apiBase() {
-    return localStorage.getItem('ssp_api_url') || 'http://localhost:8080/api';
+    const saved = localStorage.getItem('ssp_api_url');
+    if (saved) return saved.trim();
+
+    // If running on dedicated frontend port 5500 via legacy start-frontend.bat,
+    // fallback to http://localhost:8080/api for backward compatibility with Spring Boot:
+    if (typeof window !== 'undefined' && window.location.port === '5500') {
+      return 'http://localhost:8080/api';
+    }
+
+    // Default to same-origin '/api' for Vercel deployment and unified local dev server
+    return '/api';
   },
   set apiBase(url) {
-    localStorage.setItem('ssp_api_url', url.trim());
+    if (url && url.trim()) {
+      localStorage.setItem('ssp_api_url', url.trim());
+    } else {
+      localStorage.removeItem('ssp_api_url');
+    }
   },
   get demoMode() {
     return localStorage.getItem('ssp_demo_mode') === 'true';
@@ -127,7 +141,7 @@ async function apiCall(endpoint, options = {}) {
     return {
       ok: false,
       status: 0,
-      error: 'Cannot reach backend server. Please verify Spring Boot is running on port 8080.',
+      error: 'Cannot reach backend server. Please verify the API server or Vercel function is available.',
       data: null
     };
   }
@@ -143,7 +157,7 @@ function setBackendStatus(isOnline) {
     // Real backend is online - exit demo mode
     CONFIG.demoMode = false;
     statusDot.className = 'status-dot online';
-    statusText.textContent = 'Backend Online (SQLite)';
+    statusText.textContent = 'Backend Online (Live Database)';
     banner.classList.remove('visible');
   } else {
     statusDot.className = 'status-dot offline';
@@ -1677,13 +1691,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('btn-enable-demo').addEventListener('click', () => {
     CONFIG.demoMode = true;
-    showToast('Offline demo mode enabled with mock data. Start Spring Boot on port 8080 to use real SQLite data.', 'warning');
+    showToast('Offline demo mode enabled with mock data.', 'warning');
     loadAllData();
   });
 
   document.getElementById('btn-refresh-data').addEventListener('click', () => {
     CONFIG.demoMode = false;
-    showToast('Refreshing data from SQLite database...', 'info');
+    showToast('Refreshing data from database...', 'info');
     loadAllData();
   });
 
@@ -1705,7 +1719,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showToast(`Backend responded with HTTP status ${res.status}`, 'warning');
       }
     } catch (err) {
-      showToast('Could not reach backend URL. Is Spring Boot running?', 'danger');
+      showToast('Could not reach backend URL. Please check connection.', 'danger');
     }
   });
 
@@ -1723,14 +1737,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.getElementById('btn-reset-settings').addEventListener('click', () => {
-    CONFIG.apiBase = 'http://localhost:8080/api';
+    localStorage.removeItem('ssp_api_url');
     CONFIG.demoMode = false;
     CONFIG.studentName = '';
     CONFIG.studentRole = '';
     updateProfileDisplay();
     updateGreeting();
     renderSettingsView();
-    showToast('Settings reset. You can set your name anytime.', 'info');
+    showToast('Settings reset to default same-origin /api.', 'info');
     loadAllData();
   });
 

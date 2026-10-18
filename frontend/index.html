@@ -143,7 +143,7 @@
       <div class="connection-banner" id="connection-banner">
         <div class="connection-banner-left">
           <i data-lucide="alert-triangle"></i>
-          <span>Backend server offline. Run <code>start-backend.bat</code> or <code>cd backend; mvn spring-boot:run</code> to use your persistent SQLite database.</span>
+          <span>Backend server offline. Ensure your database connection or local development server (<code>npm run dev</code>) is running.</span>
         </div>
         <div class="connection-banner-actions">
           <button class="btn btn-sm btn-secondary" id="btn-banner-retry">
@@ -487,11 +487,11 @@
               <div class="form-group">
                 <label class="form-label" for="setting-api-url">Backend REST API Base URL</label>
                 <div style="display: flex; gap: 10px;">
-                  <input type="text" id="setting-api-url" class="form-control" value="http://localhost:8080/api">
+                  <input type="text" id="setting-api-url" class="form-control" value="/api">
                   <button class="btn btn-secondary" id="btn-test-connection">Test Connection</button>
                 </div>
                 <small style="color: var(--text-muted); display: block; margin-top: 4px;">
-                  Default: <code>http://localhost:8080/api</code>. Configures where frontend fetch requests are sent.
+                  Default: <code>/api</code> (Same-origin serverless API). Configures where frontend fetch requests are sent.
                 </small>
               </div>
 
@@ -499,7 +499,7 @@
                 <label class="form-label" for="setting-demo-toggle">Offline Demo Mode</label>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <span style="font-size: 13px; color: var(--text-muted);">
-                    Load sample subjects and tasks when Spring Boot backend is offline.
+                    Load sample subjects and tasks when backend is offline.
                   </span>
                   <input type="checkbox" id="setting-demo-toggle" style="width: 20px; height: 20px; cursor: pointer;">
                 </div>
